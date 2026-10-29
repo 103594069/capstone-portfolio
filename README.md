@@ -50,6 +50,21 @@ triples** across three papers, and the hallucination rate went from 1.00 to 0.00
 Credentials, database identifiers, host addresses and email addresses have been replaced
 with placeholders throughout.
 
+### Where to look
+
+| Path | What it is | Author |
+|---|---|---|
+| `verification/` | The three deterministic gates. **The most interesting part of this repository** | Mine, sole author |
+| `eval/` | Scoring harness: precision, recall, F1, hallucination rate, citation coverage | Mine, sole author |
+| `prompts/` | Versioned extraction prompts and a changelog recording why each one changed | Mine, sole author |
+| `experiments/` | The prompt A/B harnesses behind the 17 logged runs in [Evaluation](#evaluation) | Mine, sole author |
+| `main.py`, `kg_extractor.py`, `subject_specificity.py`, `Extraction_Check.py` | The extraction pipeline itself | Mine |
+| `neo4j_loader/` | Graph loader: `MERGE` upsert, run-id stamping, rollback | Mine, with three teammates |
+| `rag.py` | The chatbot and HTTP API, kept whole. My retrieval work inside it is mapped [below](#shared-code-in-this-repository) | Shared |
+| `tools/`, `scripts/` | Retrieval comparison harness, and operational scripts | Mine |
+| `tests/` | 176 passing unit tests | Mostly mine |
+| `docs/design/` | Two design documents, and an index of the two not published | Mine, sole author |
+
 ---
 
 ## How this was built
@@ -134,15 +149,22 @@ docker compose exec app python main.py papers/<paper>.pdf
 docker compose exec app python main.py papers/<paper>.pdf --dry-run
 
 # gates alone, against an existing extraction CSV
-python run_verification_pipeline.py output/<paper>_kg.csv \
+python -m scripts.run_verification_pipeline output/<paper>_kg.csv \
     --wellformedness-check --grounding-check --quote-check --pdf papers/<paper>.pdf
 
 # score an extraction against the manual ground truth
 python -m eval.run_eval --csv output/<paper>_kg_refined.csv --label "my run"
 
+# A/B a prompt variant on one page, without touching the database
+python -m experiments.test_extraction_prompt_config papers/<paper>.pdf 3 \
+    --prompt extraction_strict_tacit_v1
+
 # the chatbot, interactively
 python rag.py --approach concept
 ```
+
+Anything under `scripts/` or `experiments/` is run with `python -m` from the repository
+root, so that the modules it imports resolve.
 
 To run this yourself you would need: a PDF corpus of your own; Ollama with `deepseek-r1:7b`
 (~4.7GB); a Neo4j instance; and a `.env` built from [`.env.example`](.env.example).

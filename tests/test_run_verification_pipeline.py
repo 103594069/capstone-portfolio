@@ -1,6 +1,6 @@
 import csv
 
-from run_verification_pipeline import run
+from scripts.run_verification_pipeline import run
 
 
 def test_run_verification_pipeline_writes_expected_outputs(tmp_path):
