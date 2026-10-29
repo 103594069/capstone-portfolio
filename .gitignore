@@ -1,0 +1,50 @@
+# --- secrets -----------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*credentials*
+*secret*
+
+# --- source corpus and anything derived from it ------------------------------
+# Not for publication: third-party copyright, and extracted community
+# knowledge is not redistributed as a dataset.
+papers/
+*.pdf
+*.doc
+*.docx
+data/
+Extractions/
+output/
+rejection_logs/
+confidence_logs/
+review_queue.csv
+*_kg.csv
+*_kg_refined.csv
+*_flags.csv
+*_raw_unreviewed.csv
+
+# --- ground truth ------------------------------------------------------------
+*.xlsx
+.~lock.*
+
+# --- python ------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+
+# --- local tooling and scratch -----------------------------------------------
+.worktrees/
+uploads/
+models/
+scratch_*
+*.log
+
+# --- os ----------------------------------------------------------------------
+.DS_Store
+Thumbs.db
